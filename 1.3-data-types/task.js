@@ -54,3 +54,4 @@ function getGreeting(name) {
     console.log(`Привет, мир! Меня зовут ${userName}`);
     return `Привет, мир! Меня зовут ${userName}`;
 }
+
