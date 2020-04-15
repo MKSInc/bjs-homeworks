@@ -10,6 +10,14 @@ function sum(...args) {
     return args.reduce((sum, arg) => {return sum += arg}, 0);
 }
 
+function compareArrays(arr1, arr2) {
+    return arr1.length === arr2.length ? arr1.every((arr1Item, index) => arr1Item === arr2[index]) : false;
+}
+
+// Вариант реализации compareArrays с помощью дополнительной функции compareArraysVal,
+// что бы передать arr2 через this. (Просто не допер, что в every можно использовать стрелочную функцию,
+// которая не имеет своего контекста и соответственно видит arr2 напрямую.)
+/*
 function compareArraysVal(number, index) {
     return number === this[index];
 }
@@ -17,28 +25,27 @@ function compareArraysVal(number, index) {
 function compareArrays(arr1, arr2) {
     return arr1.length === arr2.length ? arr1.every(compareArraysVal, arr2) : false;
 }
+*/
 
 function memorize(fn, limit) {
     const memory = [];
 
     return function(...fnArray) {
-        function findArray(memoryItem) {
-            return compareArrays(memoryItem.args, fnArray)
-        }
 
-        const findResult = memory.find(findArray);
+        const findResult = memory.find(memoryItem => compareArrays(memoryItem.args, fnArray));
 
         if (findResult === undefined) {
-            memory.unshift({
+            const result = fn(...fnArray);
+            memory.push({
                 args: fnArray,
-                result: fn(...fnArray)
+                result: result
             });
 
             if (memory.length > limit) {
-                memory.length = limit;
+                memory.shift();
             }
 
-            return memory[0].result;
+            return result;
 
         } else {
             //console.log('Результат получен из памяти.');
@@ -48,12 +55,10 @@ function memorize(fn, limit) {
 }
 
 function testCase (testFunction, timerName) {
-    const testArray = [ [1,2,3], [1,2], [1,2,3], [1,2], [3,2,1], [5,6,7,8,9,10] ];
+    const testArray = [ [1,2,3], [1,2], [1,2,3], [1,2], [9,5,2,4] ];
     console.time(timerName);
-    for (let i = 0; i < 1000000; i++) {
-        for (let arr of testArray) {
-            testFunction(...arr);
-        }
+    for (let i = 0; i < 100000; i++) {
+        testArray.forEach(arr => testFunction(...arr));
     }
     console.timeEnd(timerName);
 }
