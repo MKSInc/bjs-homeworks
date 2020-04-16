@@ -8,14 +8,19 @@ class AlarmClock {
 
     addClock(timeVal, fn, idVal) {
         if (idVal === undefined || idVal === '') throw new Error('Параметр id не задан!');
-        if (this.alarmCollection.some(alarm => alarm.id === idVal))
-            throw new Error(`Будильник с таким id = ${idVal} уже существует!`);
+        try {
+            if (this.alarmCollection.some(alarm => alarm.id === idVal))
+                throw new Error(`Будильник с таким id = ${idVal} уже существует!`);
 
-        this.alarmCollection.push({
-            time: timeVal,
-            callback: fn,
-            id: idVal
-        });
+            this.alarmCollection.push({
+                time: timeVal,
+                callback: fn,
+                id: idVal
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     removeClock(idVal) {
